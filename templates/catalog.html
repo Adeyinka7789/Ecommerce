@@ -1,0 +1,67 @@
+{# ecomstore/templates/catalog.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ site_name|default:"Modern Fashion" }}{% endblock %}
+
+{% block content %}
+    <div class="catalog-page-header">
+        <h1>{{ page_title }}</h1>
+        <div class="search-filter-area">
+            <form action="{% url 'products:product_list' %}" method="get" class="product-search-form">
+                <input type="search" name="q" placeholder="Search products..." aria-label="Search products" value="{{ request.GET.q|default:'' }}">
+                <button type="submit">Search</button>
+            </form>
+            <div class="filter-sort-controls">
+                {# Example: Dropdowns or buttons for filtering and sorting #}
+                <label for="sort-by">Sort by:</label>
+                <select id="sort-by" name="sort" onchange="this.form.submit()">
+                    <option value="">Default</option>
+                    <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="name_asc" {% if request.GET.sort == 'name_asc' %}selected{% endif %}>Name: A-Z</option>
+                </select>
+                {# This will be a toggle for the sidebar filters on mobile #}
+                <button class="filter-toggle" aria-expanded="false" aria-controls="sidebar-filters">Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="catalog-layout">
+        <aside id="sidebar-filters" class="catalog-sidebar">
+            <h2 class="sidebar-title">Categories</h2>
+            <nav class="category-navigation">
+                <ul>
+                    {% for category in categories %}
+                        <li><a href="{% url 'products:category_detail' category.slug %}"
+                               class="{% if category.slug == selected_category_slug %}active{% endif %}">
+                               {{ category.name }}
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li>No categories found.</li>
+                    {% endfor %}
+                </ul>
+            </nav>
+            {# Add more filter options here later (e.g., price range, brands) #}
+        </aside>
+
+        <main class="catalog-products">
+            {% if products %}
+                <div class="product-grid">
+                    {% for product in products %}
+                        {% include 'products/_product_card.html' with product=product %}
+                    {% endfor %}
+                </div>
+
+                {# Placeholder for Pagination #}
+                <div class="pagination">
+                    {# Django's pagination typically goes here #}
+                    {# You'll implement this when you add pagination logic to your views #}
+                </div>
+            {% else %}
+                <p class="no-products-message">No products found matching your criteria.</p>
+            {% endif %}
+        </main>
+    </div>
+{% endblock %}

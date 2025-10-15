@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order #{{ order.id }} Details - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card p-4 shadow-lg" style="border-radius: 15px; background: #fafafa;">
+                <h2 class="text-center mb-4 display-5 fw-bold" style="color: #1a2e44; border-bottom: 2px solid #800000; padding-bottom: 0.5rem;">Order Details: #{{ order.id }}</h2>
+
+                <div class="row mb-5">
+                    <div class="col-md-6">
+                        <div class="card h-100 p-3" style="border-left: 4px solid #800000; background: #ffffff;">
+                            <h5 class="mb-3" style="color: #2c3e50; font-family: 'Georgia', serif;">Order Information</h5>
+                            <p><strong>Order Date:</strong> <span style="color: #7f8c8d;">{{ order.created_at|date:"F j, Y, H:i" }}</span></p>
+                            <p><strong>Status:</strong> {% if order.paid %}<span class="badge bg-success text-white">Paid</span>{% else %}<span class="badge bg-warning text-dark">Pending Payment</span>{% endif %}</p>
+                            <p><strong>Total Cost:</strong> <span style="color: #3498db;">${{ order.get_total_cost|floatformat:2 }}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 p-3" style="border-left: 4px solid #800000; background: #ffffff;">
+                            <h5 class="mb-3" style="color: #2c3e50; font-family: 'Georgia', serif;">Customer Information</h5>
+                            <p><strong>Username:</strong> <span style="color: #7f8c8d;">{{ order.user.username }}</span></p>
+                            <p><strong>Email:</strong> <span style="color: #7f8c8d;">{% if order.user.email %}{{ order.user.email }}{% else %}Not set{% endif %}</span></p>
+                            <h6 style="color: #2c3e50; font-family: 'Georgia', serif;">Shipping Address</h6>
+                            <p style="color: #7f8c8d;">{{ order.shipping_address_line1 }}<br>{% if order.shipping_address_line2 %}{{ order.shipping_address_line2 }}<br>{% endif %}{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip_code }}</p>
+                        
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-2 border-secondary opacity-50">
+
+                <h4 class="mb-4" style="color: #1a2e44; font-family: 'Georgia', serif; border-bottom: 2px solid #800000; padding-bottom: 0.5rem; display: inline-block;">Items in this Order</h4>
+                {% if order.items.all %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="color: #0850de;">Product</th>
+                                    <th style="color: #0850de;">Quantity</th>
+                                    <th style="color: #0850de;">Price per Unit</th>
+                                    <th style="color: #0850de;">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr style="transition: background-color 0.3s ease;">
+                                    <td><a href="{% url 'products:product_detail' item.product.id %}" style="color: #3498db; text-decoration: none; transition: color 0.3s ease;">{{ item.product.name }}</a></td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>${{ item.price|floatformat:2 }}</td>
+                                    <td>${{ item.get_cost|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="table-secondary">
+                                    <td colspan="3" class="text-end"><strong style="color: #2c3e50;">Order Total:</strong></td>
+                                    <td><strong style="color: #800000;">${{ order.get_total_cost|floatformat:2 }}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning text-center shadow-sm" role="alert" style="background: #fff3cd; border: 1px solid #ffeeba;">
+                        No items found for this order.
+                    </div>
+                {% endif %}
+
+                <div class="text-center mt-5">
+                    <a href="{% url 'order_history' %}" class="btn btn-outline-secondary me-3" style="border-color: #6c757d; color: #6c757d; transition: all 0.3s ease;">Back to Order History</a>
+                    <a href="{% url 'home' %}" class="btn btn-primary" style="background-color: #3498db; border-color: #3498db; transition: all 0.3s ease;">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_head %}
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    a:hover {
+        color: #800000 !important;
+    }
+    .btn:hover {
+        transform: scale(1.05);
+    }
+    @media (max-width: 768px) {
+        .card {
+            padding: 2rem;
+        }
+        h2 {
+            font-size: 1.75rem;
+        }
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+        .btn {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+{% endblock %}

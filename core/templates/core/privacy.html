@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Privacy Policy - {{ site_name|default:"Excellent Fashion Wares" }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .privacy-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2.5rem 1rem;
+        color: #2c3e50;
+        background: #fafafa;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    }
+    .privacy-section {
+        margin-bottom: 2.5rem;
+        padding: 1.5rem;
+        background: #ffffff;
+        border-radius: 10px;
+        border-left: 4px solid #800000; /* Maroon accent to match your brand */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .privacy-section:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .privacy-section h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a2e44;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #800000; /* Maroon underline */
+        padding-bottom: 0.5rem;
+        display: inline-block;
+    }
+    .privacy-section p {
+        font-size: 1rem;
+        color: #7f8c8d;
+        line-height: 1.7;
+        font-family: 'Georgia', serif; /* Elegant font for readability */
+    }
+    .privacy-section ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    .privacy-section ul li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+    .privacy-section ul li:before {
+        content: "✦"; /* Subtle decorative bullet */
+        color: #800000; /* Maroon bullet */
+        position: absolute;
+        left: 0;
+        font-size: 1rem;
+    }
+    .contact-info {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .contact-info a {
+        color: #3498db;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .contact-info a:hover {
+        color: #800000; /* Maroon on hover */
+    }
+    @media (max-width: 768px) {
+        .privacy-container {
+            padding: 1.5rem 0.5rem;
+        }
+        .privacy-section {
+            padding: 1rem;
+        }
+        .privacy-section h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="privacy-container">
+    <h1 class="text-center mb-5 display-4 fw-bold" style="color: #1a2e44;">Privacy Policy</h1>
+
+    <div class="privacy-section">
+        <h2>Introduction</h2>
+        <p>
+            At Excellent Fashion Wares, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or make a purchase. By using our site, you agree to the terms outlined in this policy.
+        </p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>Information We Collect</h2>
+        <p>
+            We may collect the following types of information:
+        </p>
+        <ul>
+            <li>Personal information (e.g., name, email, shipping address) when you register or place an order.</li>
+            <li>Payment information (processed securely by our payment providers).</li>
+            <li>Usage data (e.g., IP address, browser type) to improve our site’s functionality.</li>
+            <li>Cookies and similar technologies to enhance your shopping experience.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>How We Use Your Information</h2>
+        <p>
+            We use your information to:
+        </p>
+        <ul>
+            <li>Process and fulfill your orders.</li>
+            <li>Provide customer support and respond to inquiries.</li>
+            <li>Improve our website and personalize your shopping experience.</li>
+            <li>Send promotional emails (with your consent, which you can withdraw anytime).</li>
+            <li>Ensure compliance with legal obligations.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>Data Security</h2>
+        <p>
+            We implement industry-standard security measures to protect your data, including encryption and secure servers. However, no online transmission is completely secure, and we cannot guarantee absolute security.
+        </p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>Your Rights</h2>
+        <p>
+            You have the right to:
+        </p>
+        <ul>
+            <li>Access, correct, or delete your personal data.</li>
+            <li>Object to or restrict processing of your data.</li>
+            <li>Request data portability.</li>
+            <li>Withdraw consent for marketing communications.</li>
+        </ul>
+        <p>
+            To exercise these rights, please contact us using the details below.
+        </p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>Contact Us</h2>
+        <p>
+            If you have any questions or concerns about this Privacy Policy, please reach out to us:
+        </p>
+        <p class="contact-info">
+            Email: <a href="mailto:privacy@excellentfashionwares.com">privacy@excellentfashionwares.com</a><br>
+            Phone: +1-800-555-0123<br>
+            Address: 123 Fashion Lane, Style City, SC 12345
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ site_name|default:"Excellent Fashion Wares" }} - Premium Fashion & Style{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Hero Section with Full-width Banner -->
+<section class="relative bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="relative container mx-auto px-4 py-20 md:py-32">
+        <div class="max-w-3xl">
+            <span class="inline-block bg-white text-gray-800 bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                ✨ New Collection 2025
+            </span>
+            <h1 class="text-5xl md:text-7xl text-white font-bold mb-6 leading-tight">
+                Elevate Your<br>
+                <span class="text-yellow-300">Style Game</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-gray-100 max-w-xl">
+                Discover premium fashion that speaks to your unique personality. Quality meets affordability.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{% url 'products:product_list_all' %}" class="inline-flex items-center justify-center bg-white text-indigo-600 font-bold py-4 px-8 rounded-full hover:bg-gray-100 transform hover:scale-105 transition duration-300 shadow-xl">
+                    <i class="bi bi-bag-heart mr-2"></i> Shop Now
+                </a>
+                <a href="#featured" class="inline-flex items-center justify-center border-2 border-white text-white font-bold py-4 px-8 rounded-full hover:bg-gray-600 hover:text-white transition duration-300">
+                    <i class="bi bi-arrow-down mr-2"></i> Explore
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Decorative Elements -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-pink-300 opacity-10 rounded-full blur-3xl"></div>
+</section>
+
+<!-- Trust Badges -->
+<section class="bg-gray-50 py-8">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div class="flex flex-col items-center">
+                <i class="bi bi-truck text-4xl text-indigo-600 mb-2"></i>
+                <h3 class="font-semibold text-gray-800">Free Shipping</h3>
+                <p class="text-sm text-gray-600">On orders over ₦10,000</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <i class="bi bi-shield-check text-4xl text-indigo-600 mb-2"></i>
+                <h3 class="font-semibold text-gray-800">Secure Payment</h3>
+                <p class="text-sm text-gray-600">100% protected</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <i class="bi bi-arrow-repeat text-4xl text-indigo-600 mb-2"></i>
+                <h3 class="font-semibold text-gray-800">Easy Returns</h3>
+                <p class="text-sm text-gray-600">30-day guarantee</p>
+            </div>
+            <div class="flex flex-col items-center">
+                <i class="bi bi-headset text-4xl text-indigo-600 mb-2"></i>
+                <h3 class="font-semibold text-gray-800">24/7 Support</h3>
+                <p class="text-sm text-gray-600">Always here to help</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Shop by Category -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Shop by Category</h2>
+            <p class="text-gray-600 text-lg">Find exactly what you're looking for</p>
+        </div>
+        
+        {% if categories %}
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {% for category in categories %}
+            <a href="{% url 'products:product_list_all' %}?category={{ category.slug }}" class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div class="aspect-square bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center p-8">
+                    <div class="text-center">
+                        <i class="bi bi-star-fill text-5xl text-indigo-600 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition">{{ category.name }}</h3>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black opacity-0 group-hover:opacity-20 transition duration-300"></div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-gray-500">Categories coming soon...</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section id="featured" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center mb-12">
+            <div>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Featured Products</h2>
+                <p class="text-gray-600 text-lg">Handpicked just for you</p>
+            </div>
+            <a href="{% url 'products:product_list_all' %}" class="hidden md:inline-flex items-center text-indigo-600 font-semibold hover:text-indigo-700">
+                View All <i class="bi bi-arrow-right ml-2"></i>
+            </a>
+        </div>
+        
+        {% if products %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for product in products %}
+            <div class="product-card-modern group">
+                {% include 'products/_product_card.html' with product=product %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-10 md:hidden">
+            <a href="{% url 'products:product_list_all' %}" class="inline-flex items-center bg-indigo-600 text-white font-bold py-3 px-8 rounded-full hover:bg-indigo-700 transition">
+                View All Products <i class="bi bi-arrow-right ml-2"></i>
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <i class="bi bi-inbox text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 text-lg">No products available at the moment</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Popular Products / Trending -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <span class="inline-block bg-pink-100 text-pink-600 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                🔥 Hot Right Now
+            </span>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Trending Products</h2>
+            <p class="text-gray-600 text-lg">What everyone is talking about</p>
+        </div>
+        
+        {% if popular_products %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for product in popular_products %}
+            <div class="product-card-modern group">
+                {% include 'products/_product_card.html' with product=product %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 bg-gray-50 rounded-2xl">
+            <i class="bi bi-graph-up text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500 text-lg">Trending items will appear here soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Search Section -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-8">Can't Find What You're Looking For?</h2>
+            <form action="{% url 'products:product_list_all' %}" method="get">
+                <div class="relative">
+                    <input type="search" name="q" placeholder="Search for shoes, bags, watches, accessories..." class="w-full px-6 py-5 pr-32 rounded-full border-2 border-gray-200 focus:border-indigo-500 focus:outline-none text-lg shadow-lg" aria-label="Search products">
+                    <button type="submit" class="absolute right-2 top-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full transition transform hover:scale-105">
+                        <i class="bi bi-search mr-2"></i> Search
+                    </button>
+                </div>
+            </form>
+            <div class="flex flex-wrap gap-2 justify-center mt-6">
+                <span class="text-sm text-gray-500">Popular:</span>
+                <a href="#" class="text-sm bg-white px-4 py-2 rounded-full hover:bg-indigo-50 transition">Sneakers</a>
+                <a href="#" class="text-sm bg-white px-4 py-2 rounded-full hover:bg-indigo-50 transition">Smart Watches</a>
+                <a href="#" class="text-sm bg-white px-4 py-2 rounded-full hover:bg-indigo-50 transition">Handbags</a>
+                <a href="#" class="text-sm bg-white px-4 py-2 rounded-full hover:bg-indigo-50 transition">Sunglasses</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Modern Product Card Animations */
+    .product-card-modern {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .product-card-modern:hover {
+        transform: translateY(-8px);
+    }
+    
+    /* Smooth Scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Loading Animation for Images */
+    img {
+        transition: opacity 0.3s ease-in-out;
+    }
+    
+    img[loading="lazy"] {
+        opacity: 0;
+    }
+    
+    img.loaded {
+        opacity: 1;
+    }
+    
+    /* Mobile Optimizations */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-size: 2rem;
+        }
+        
+        section {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+    }
+    
+    /* Accessibility Improvements */
+    a:focus, button:focus, input:focus {
+        outline: 2px solid #6366f1;
+        outline-offset: 2px;
+    }
+    
+    /* Performance: Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+</style>
+
+<script>
+    // Lazy loading images
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('img[loading="lazy"]');
+        images.forEach(img => {
+            img.addEventListener('load', function() {
+                this.classList.add('loaded');
+            });
+        });
+    });
+</script>
+{% endblock %}

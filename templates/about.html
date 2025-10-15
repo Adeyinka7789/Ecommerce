@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}About Us - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <div class="card shadow-lg border-0 p-4 about-main-card"> {# ADDED: about-main-card class #}
+            <div class="card-body">
+                <h1 class="mb-4 text-center">About Us</h1>
+                <p class="lead text-center">
+                    Welcome to <strong>Excellence Fashion Wares</strong> – Your Style Destination.
+                </p>
+                <p>
+                    At <strong>Excellence Fashion Wares</strong>, we’re more than just a fashion store — we’re a brand that celebrates individuality, confidence, and elegance.
+                    Founded with a passion for helping people look and feel their best, our mission is to bring you fashionable, high-quality pieces that suit every mood, moment, and personality.
+                </p>
+                <p>
+                    We carefully curate our collections to reflect the latest trends while staying true to timeless style. Whether you're dressing for work, a casual day out, or a special occasion,
+                    you’ll find something that fits just right — in both comfort and character.
+                </p>
+                <ul>
+                    <li><strong>Quality you can trust</strong></li>
+                    <li><strong>Styles for everyone</strong></li>
+                    <li><strong>Customer service with heart</strong></li>
+                </ul>
+                <p>
+                    Join our growing community of style-forward shoppers and discover the excellence in every piece.
+                </p>
+                <p class="fw-bold text-center">
+                    Be Bold. Be Beautiful. Be You — with Excellence Fashion Wares.
+                </p>
+
+                <hr class="my-5">
+                <h2 class="text-center mb-4">Meet the Team</h2>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    <div class="col">
+                        <div class="card h-100 text-center team-member-card"> {# ADDED: team-member-card class #}
+                            <img src="{% static 'images/founder.jpg' %}" class="card-img-top" alt="Founder">
+                            <div class="card-body">
+                                <h5 class="card-title">Adeyinka Oluwaseun</h5>
+                                <p class="card-text">Founder & Creative Director</p>
+                                <p class="small">With a deep passion for fashion and customer experience, Adeyinka leads the vision and direction of Excellence Fashion Wares.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100 text-center team-member-card">
+                            <img src="{% static 'images/team_member2.jpg' %}" class="card-img-top" alt="Team Member 2">
+                            <div class="card-body">
+                                <h5 class="card-title">Sarah Davies</h5>
+                                <p class="card-text">Lead Designer</p>
+                                <p class="small">Sarah brings innovative designs and a keen eye for detail to all our collections.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card h-100 text-center team-member-card">
+                            <img src="{% static 'images/team_member3.jpg' %}" class="card-img-top" alt="Team Member 3">
+                            <div class="card-body">
+                                <h5 class="card-title">David Chen</h5>
+                                <p class="card-text">Customer Relations Manager</p>
+                                <p class="small">David ensures every customer experience is seamless and delightful.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5">
+                <h2 class="text-center mb-4">What Our Customers Say</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    <div class="col">
+                        <div class="card border-0 shadow-sm h-100 testimonial-card"> {# ADDED: testimonial-card class #}
+                            <div class="card-body">
+                                <blockquote class="blockquote mb-0">
+                                    <p>"Excellent service and beautiful pieces! I always find something I love."</p>
+                                    <footer class="blockquote-footer mt-2">Tosin A.</footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card border-0 shadow-sm h-100 testimonial-card">
+                            <div class="card-body">
+                                <blockquote class="blockquote mb-0">
+                                    <p>"Their attention to detail and customer support is unmatched. Highly recommended!"</p>
+                                    <footer class="blockquote-footer mt-2">Chidera K.</footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="col">
+                        <div class="card border-0 shadow-sm h-100 testimonial-card">
+                            <div class="card-body">
+                                <blockquote class="blockquote mb-0">
+                                    <p>"I'm consistently impressed with the quality and unique style of their offerings."</p>
+                                    <footer class="blockquote-footer mt-2">Emeka N.</footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card border-0 shadow-sm h-100 testimonial-card">
+                            <div class="card-body">
+                                <blockquote class="blockquote mb-0">
+                                    <p>"Excellence Fashion Wares has become my go-to for all my wardrobe needs. So happy with my purchases!"</p>
+                                    <footer class="blockquote-footer mt-2">Fatima B.</footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% load static %}
+{% load humanize %}
+
+<div class="card h-100 shadow-sm border-0 rounded-lg">
+    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+        {% else %}
+            <img src="{% static 'images/placeholder.png' %}" class="card-img-top" alt="No image available" style="height: 200px; object-fit: cover;">
+        {% endif %}
+    </a>
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title mb-1 text-truncate">
+            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+        </h5>
+        <p class="card-text text-muted small mb-2">{{ product.category.name }}</p>
+
+        <p class="card-text product-price mt-auto fs-5 fw-bold">
+            {% if product.get_min_variant_price %}
+                {% if product.get_min_variant_price == product.get_max_variant_price %}
+                    ${{ product.get_min_variant_price|floatformat:2|intcomma }}
+                {% else %}
+                    From ${{ product.get_min_variant_price|floatformat:2|intcomma }}
+                {% endif %}
+            {% else %}
+                <span class="text-danger">Price: N/A</span>
+            {% endif %}
+        </p>
+    </div>
+
+    {# START OF UPDATED card-footer #}
+    <div class="card-footer bg-white border-top-0 py-3 px-3">
+        <div class="flex justify-between w-full">
+            <!-- View Details Button -->
+            <a href="{{ product.get_absolute_url }}"
+               class="w-[45%] py-2 px-2 text-center rounded-md
+                      bg-blue-600 text-white font-semibold text-sm
+                      hover:bg-blue-700 transition duration-300">
+                View Details
+            </a>
+
+            {% if product.id %}
+                <!-- Add to Cart Button -->
+                <form action="{% url 'cart:add_to_cart' product_id=product.id %}" method="post" class="w-[70%]">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit"
+                            class="w-full py-2 px-2 text-center rounded-md
+                                   bg-green-600 text-white font-semibold text-sm
+                                   hover:bg-green-700 transition duration-300">
+                        Add to Cart
+                    </button>
+                </form>
+            {% else %}
+                <!-- Unavailable Button -->
+                <button class="w-[70%] py-2 px-2 text-center rounded-md
+                               bg-gray-400 text-white font-semibold cursor-not-allowed text-sm" disabled>
+                    Unavailable
+                </button>
+            {% endif %}
+        </div>
+    </div>
+    {# END OF UPDATED card-footer #}
+</div>

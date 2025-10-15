@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if address_id %}Edit Address{% else %}Add New Address{% endif %} - {{ site_name }}
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    .main-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        background: #fff;
+        transition: transform 0.2s;
+    }
+    .main-card:hover {
+        transform: translateY(-4px);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: background 0.3s;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+    .btn-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+    }
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    }
+    .form-label {
+        font-weight: 500;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        padding: 0.75rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus {
+        border-color: #34d399;
+        box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2);
+        outline: none;
+    }
+    .alert-danger {
+        background: #fef2f2;
+        border: none;
+        border-radius: 8px;
+        color: #dc2626;
+        padding: 0.75rem;
+    }
+    .form-text {
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+    @media (max-width: 768px) {
+        .main-card {
+            padding: 1.5rem;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 0.6rem 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4 shadow-sm main-card">
+                <h2 class="text-center mb-4 font-bold text-3xl text-gray-800">
+                    {% if address_id %}Edit Address{% else %}Add New Address{% endif %}
+                </h2>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field|add_class:"form-control" }} 
+                            {% if field.errors %}
+                                <div class="alert alert-danger mt-1" role="alert">{{ field.errors.0 }}</div>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <div class="form-text text-muted">{{ field.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                        {% if address_id %}Save Changes{% else %}Add Address{% endif %}
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'address_list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

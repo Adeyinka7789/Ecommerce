@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Login - {{ site_name }}{% endblock %}
+
+{% block extra_head %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <header class="section-header">
+        <h2 class="section-title">Login</h2>
+        <p class="section-subtitle">Access your account to continue shopping!</p>
+    </header>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">
+                    <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' or message.tags == 'danger' %}bi-exclamation-circle-fill{% else %}bi-info-circle-fill{% endif %} me-2"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% elif form.errors %}
+        <div class="messages-container">
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                Your username and password didn’t match. Please try again.
+            </div>
+        </div>
+    {% elif next and user.is_authenticated %}
+        <div class="messages-container">
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Your account doesn’t have access to this page. Please login with an account that has access.
+            </div>
+        </div>
+    {% elif next %}
+        <div class="messages-container">
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                Please login to see this page.
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <div class="login-card">
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field|add_class:"form-input" }}
+                            {% if field.help_text %}
+                                <small class="help-text">{{ field.help_text|safe }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="error-message">{{ field.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="form-actions">
+                        <button type="submit" class="login-button">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                        </button>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+                <div class="login-links">
+                    <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+                    <p>Don’t have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

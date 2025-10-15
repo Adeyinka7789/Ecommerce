@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Search Results for "{{ query }}" - {{ site_name }}{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+    .search-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 2rem 1rem;
+        border-radius: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    .search-header h2 {
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: 2rem;
+    }
+    .search-header p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+    }
+    .product-grid {
+        margin: 0 -15px; /* Adjusted for wider spacing */
+    }
+    .product-card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        max-width: 600px; /* Increased width for wider cards */
+        margin: 0 15px 25px; /* Adjusted margin for spacing */
+    }
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .product-card img {
+        object-fit: cover;
+        height: 180px; /* Reduced height for a shorter card */
+        width: 100%;
+    }
+    .product-card .card-body {
+        padding: 1rem; /* Reduced padding for shorter height */
+        background: #ffffff;
+    }
+    .product-card .card-title a {
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem; /* Slightly reduced font size */
+    }
+    .product-card .card-title a:hover {
+        color: #3498db;
+    }
+    .product-card .card-text {
+        margin-bottom: 0.5rem;
+        color: #7f8c8d;
+        font-size: 0.9rem; /* Slightly reduced font size */
+    }
+    .product-card .price {
+        color: #27ae60;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    .product-card .card-footer {
+        background: #ffffff;
+        border-top: 1px solid #eee;
+        padding: 0.75rem 1rem; /* Reduced padding */
+        display: flex;
+        gap: 0.5rem;
+        justify-content: space-between;
+    }
+    .no-results {
+        background: #fef9e7;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .no-results h4 {
+        color: #e67e22;
+        font-weight: 700;
+    }
+    .no-results p {
+        color: #7f8c8d;
+        font-size: 1rem;
+    }
+    .btn-browse-all {
+        background-color: #3498db;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        font-weight: 600;
+        border-radius: 20px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-browse-all:hover {
+        background-color: #2980b9;
+    }
+    .btn-custom {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        border-radius: 5px;
+    }
+    .btn-outline-primary.custom-btn {
+        color: #3498db;
+        border-color: #3498db;
+    }
+    .btn-outline-primary.custom-btn:hover {
+        background-color: #3498db;
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <!-- Search Header -->
+    <div class="search-header text-center">
+        <h2>Search Results</h2>
+        {% if query %}
+            <p>Showing results for: <strong>{{ query }}</strong></p>
+        {% else %}
+            <p>Please enter a search term to find products.</p>
+        {% endif %}
+    </div>
+
+    <!-- Product Results -->
+    {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="col d-flex justify-content-center">
+                <div class="card product-card">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="{% static 'images/placeholder.png' %}" class="card-img-top" alt="No image available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'products:product_detail' slug=product.slug %}">{{ product.name }}</a>
+                        </h5>
+                        <p class="card-text">{{ product.category.name }}</p>
+                        <p class="card-text price">${{ product.get_min_variant_price|floatformat:2 }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'products:product_detail' slug=product.slug %}" class="btn btn-outline-primary custom-btn btn-sm">
+                            <i class="bi bi-eye me-1"></i> View
+                        </a>
+                        <form action="{% url 'cart:add_to_cart' product.id %}" method="post" class="d-inline-block">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-success custom-btn btn-sm">
+                                <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if query %}
+            <div class="no-results text-center">
+                <h4>No Products Found</h4>
+                <p>We couldn’t find any products matching "<strong>{{ query }}</strong>". Try adjusting your search or explore our full collection.</p>
+                <a href="{% url 'products:product_list' %}" class="btn btn-browse-all mt-3">Browse All Products</a>
+            </div>
+        {% else %}
+            <div class="text-center mt-3">
+                <a href="{% url 'products:product_list' %}" class="btn btn-browse-all">Browse All Products</a>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

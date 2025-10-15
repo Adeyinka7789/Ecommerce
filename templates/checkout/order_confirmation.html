@@ -1,0 +1,65 @@
+{# ecomstore/templates/checkout/order_confirmation.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+    <div class="order-confirmation-container">
+        <h1>Order Confirmation</h1>
+        <p class="confirmation-message">Thank you for your order! Your order #<strong>{{ order.id }}</strong> has been placed successfully.</p>
+
+        <div class="order-details-summary">
+            <h2>Order Details</h2>
+            <p><strong>Order ID:</strong> {{ order.id }}</p>
+            <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+            <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y H:i" }}</p>
+            <p><strong>Total Price:</strong> ${{ order.total_price|floatformat:2 }}</p>
+        </div>
+
+        <div class="customer-info-summary">
+            <h2>Customer Information</h2>
+            <p><strong>Name:</strong> {{ order.first_name }} {{ order.last_name }}</p>
+            <p><strong>Email:</strong> {{ order.email }}</p>
+            {% if order.phone %}<p><strong>Phone:</strong> {{ order.phone }}</p>{% endif %}
+        </div>
+
+        <div class="address-summary">
+            <div class="shipping-address-summary">
+                <h2>Shipping Address</h2>
+                <p>{{ order.shipping_address_line1 }}</p>
+                {% if order.shipping_address_line2 %}<p>{{ order.shipping_address_line2 }}</p>{% endif %}
+                <p>{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip_code }}</p>
+                <p>{{ order.shipping_country }}</p>
+            </div>
+            <div class="billing-address-summary">
+                <h2>Billing Address</h2>
+                {% if order.billing_address_line1 == order.shipping_address_line1 and order.billing_city == order.shipping_city %}
+                    <p>Same as shipping address.</p>
+                {% else %}
+                    <p>{{ order.billing_address_line1 }}</p>
+                    {% if order.billing_address_line2 %}<p>{{ order.billing_address_line2 }}</p>{% endif %}
+                    <p>{{ order.billing_city }}, {{ order.billing_state }} {{ order.billing_zip_code }}</p>
+                    <p>{{ order.billing_country }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="order-items-summary">
+            <h2>Items in Your Order</h2>
+            <ul>
+                {% for item in order.items.all %}
+                    <li>
+                        {{ item.quantity }} x {{ item.product_name }} @ ${{ item.product_price|floatformat:2 }} each
+                        (Total: ${{ item.get_total_price|floatformat:2 }})
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="{% url 'products:product_list' %}" class="btn btn-primary">Continue Shopping</a>
+            {# Link to user's order history will go here later #}
+        </div>
+    </div>
+{% endblock %}

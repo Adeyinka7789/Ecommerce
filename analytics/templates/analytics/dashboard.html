@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Analytics Dashboard - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12 col-lg-10">
+            <div class="card shadow-lg border-0 rounded-4 p-lg-5 p-4 bg-light"> {# Replaced inline style with Bootstrap classes and custom rounded-4 #}
+                <h2 class="text-center mb-5 fw-bold text-primary display-5"> {# text-primary for brand color, display-5 for larger heading #}
+                    <i class="bi bi-graph-up-arrow me-3"></i> Analytics Dashboard
+                </h2>
+
+                <div class="row mb-5 g-4"> {# g-4 for consistent gutter spacing #}
+                    <div class="col-sm-6 col-md-3"> {# col-sm-6 for better stacking on smaller screens #}
+                        <div class="card h-100 shadow-sm border-start border-primary border-5 rounded-3 info-card-hover"> {# info-card-hover for custom hover #}
+                            <div class="card-body p-4 text-center">
+                                <h5 class="card-title text-muted mb-2 fs-6 text-uppercase fw-semibold">Total Orders</h5>
+                                <p class="card-text text-dark display-6 fw-bold mb-0">{{ total_orders }}</p> {# Larger, bolder numbers #}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card h-100 shadow-sm border-start border-success border-5 rounded-3 info-card-hover">
+                            <div class="card-body p-4 text-center">
+                                <h5 class="card-title text-muted mb-2 fs-6 text-uppercase fw-semibold">Total Revenue</h5>
+                                <p class="card-text text-dark display-6 fw-bold mb-0">${{ total_revenue|floatformat:2 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card h-100 shadow-sm border-start border-info border-5 rounded-3 info-card-hover">
+                            <div class="card-body p-4 text-center">
+                                <h5 class="card-title text-muted mb-2 fs-6 text-uppercase fw-semibold">Orders (Last 30 Days)</h5>
+                                <p class="card-text text-dark display-6 fw-bold mb-0">{{ recent_orders_count }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="card h-100 shadow-sm border-start border-warning border-5 rounded-3 info-card-hover">
+                            <div class="card-body p-4 text-center">
+                                <h5 class="card-title text-muted mb-2 fs-6 text-uppercase fw-semibold">Revenue (Last 30 Days)</h5>
+                                <p class="card-text text-dark display-6 fw-bold mb-0">${{ recent_revenue|floatformat:2 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h4 class="mb-4 fw-bold text-dark border-bottom border-secondary pb-2 d-inline-block">Popular Products</h4> {# Better border, font weight #}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle table-striped rounded-3 overflow-hidden"> {# table-striped for better readability #}
+                            <thead class="bg-primary text-white"> {# Used primary color for header #}
+                                <tr>
+                                    <th scope="col" class="py-3 ps-4">Product</th>
+                                    <th scope="col" class="py-3 pe-4">Total Quantity Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in popular_products %}
+                                <tr> {# Removed inline background from tr, let table-striped handle it #}
+                                    <td class="ps-4 py-3">{{ product.product_name }}</td>
+                                    <td class="pe-4 py-3">{{ product.total_quantity }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="text-center py-4 text-muted">No popular products data available.</td> {# Adjusted padding and text color #}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row mb-5 g-4">
+                    <div class="col-md-6">
+                        <div class="card h-100 shadow-sm border-start border-danger border-5 rounded-3 info-card-hover">
+                            <div class="card-body p-4 text-center">
+                                <h5 class="card-title text-muted mb-2 fs-6 text-uppercase fw-semibold">Total Users</h5>
+                                <p class="card-text text-dark display-6 fw-bold mb-0">{{ total_users }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 shadow-sm border-start border-secondary border-5 rounded-3 info-card-hover">
+                            <div class="card-body p-4 text-center">
+                                <h5 class="card-title text-muted mb-2 fs-6 text-uppercase fw-semibold">Active Users (Last 30 Days)</h5>
+                                <p class="card-text text-dark display-6 fw-bold mb-0">{{ active_users }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h4 class="mb-4 fw-bold text-dark border-bottom border-secondary pb-2 d-inline-block">Orders Per Day (Last 30 Days)</h4>
+                    <div class="card shadow-sm rounded-3 p-4"> {# Added card wrapper for the chart #}
+                        {% if orders_per_day %}
+                            {# Make sure you have Chart.js included in your base.html or via extra_js block #}
+                            <canvas id="ordersChart" class="w-100"></canvas>
+                            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const ctx = document.getElementById('ordersChart').getContext('2d');
+                                    new Chart(ctx, {
+                                        type: "line",
+                                        data: {
+                                            "labels": [{% for entry in orders_per_day %}"{{ entry.day }}",{% endfor %}],
+                                            "datasets": [{
+                                                "label": "Orders",
+                                                "data": [{% for entry in orders_per_day %}{{ entry.count }},{% endfor %}],
+                                                "fill": false,
+                                                "borderColor": "#800000", /* Changed to deep red/maroon for fashion aesthetic */
+                                                "backgroundColor": "#800000",
+                                                "tension": 0.1
+                                            }]
+                                        },
+                                        "options": {
+                                            responsive: true,
+                                            maintainAspectRatio: true,
+                                            plugins: {
+                                                legend: {
+                                                    display: true,
+                                                    position: 'top',
+                                                    labels: {
+                                                        font: {
+                                                            size: 14
+                                                        }
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    mode: 'index',
+                                                    intersect: false,
+                                                }
+                                            },
+                                            "scales": {
+                                                "x": {
+                                                    "title": {
+                                                        "display": true,
+                                                        "text": "Date",
+                                                        "font": {
+                                                            size: 14,
+                                                            weight: 'bold'
+                                                        }
+                                                    },
+                                                    grid: {
+                                                        display: false
+                                                    }
+                                                },
+                                                "y": {
+                                                    "title": {
+                                                        "display": true,
+                                                        "text": "Number of Orders",
+                                                        "font": {
+                                                            size: 14,
+                                                            weight: 'bold'
+                                                        }
+                                                    },
+                                                    "beginAtZero": true,
+                                                    ticks: {
+                                                        precision: 0 // Ensure integer ticks for order count
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
+                            </script>
+                        {% else %}
+                            <p class="text-center py-4 text-muted">No orders data for the last 30 days.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="{% url 'admin:index' %}" class="btn btn-outline-dark btn-lg rounded-pill px-5">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+{# This CSS should ideally go into a dedicated static file like `style.css` #}
+<style>
+    /* Custom styles for the analytics dashboard */
+    .rounded-4 {
+        border-radius: 1.5rem !important; /* Slightly more rounded than Bootstrap's default */
+    }
+    .info-card-hover:hover {
+        transform: translateY(-5px); /* Lift effect on hover */
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important; /* Enhanced shadow on hover */
+        transition: all 0.3s ease-in-out; /* Smooth transition */
+    }
+    .info-card-hover { /* Ensure initial state has a subtle shadow */
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* Table styling for better visual appeal */
+    .table-responsive .table {
+        border-collapse: separate; /* Allows border-radius on table */
+        border-spacing: 0;
+    }
+    .table-responsive .table thead th:first-child {
+        border-top-left-radius: 0.5rem; /* Rounded corners for table header */
+    }
+    .table-responsive .table thead th:last-child {
+        border-top-right-radius: 0.5rem; /* Rounded corners for table header */
+    }
+    .table-responsive .table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 0.5rem; /* Rounded corners for table body last row */
+    }
+    .table-responsive .table tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 0.5rem; /* Rounded corners for table body last row */
+    }
+    .table th, .table td {
+        vertical-align: middle; /* Align text vertically in table cells */
+    }
+
+    /* Override Bootstrap primary for a fashion-friendly color, e.g., deep maroon/burgundy */
+    /* You would ideally define this in your main style.css or a custom Bootstrap theme */
+    :root {
+        --bs-primary: #0a75bc; /* Deep Maroon / Burgundy for fashion */
+        --bs-success: #28a745; /* Standard green for positive metrics */
+        --bs-info: #17a2b8;   /* Standard info blue */
+        --bs-warning: #ffc107; /* Standard warning yellow */
+        --bs-danger: #dc3545;  /* Standard danger red */
+        --bs-secondary: #6c757d; /* Standard secondary gray */
+    }
+
+    .text-primary { color: var(--bs-primary) !important; }
+    .bg-primary { background-color: var(--bs-primary) !important; }
+    .border-primary { border-color: var(--bs-primary) !important; }
+    .btn-outline-dark { /* Styling for "Back to Admin" button */
+        border-color: #343a40;
+        color: #343a40;
+    }
+    .btn-outline-dark:hover {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .display-5 { font-size: 1.75rem !important; }
+        .display-6 { font-size: 1.25rem !important; }
+        .info-card-hover { margin-bottom: 1rem; }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{% if category %}{{ category.name }} Products{% else %}All Products{% endif %} - {{ site_name|default:"Excellence Fashion Wares" }}{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    {% if category %}
+        <h2 class="text-center mb-5 font-bold text-3xl text-gray-800">Products in {{ category.name }}</h2>
+    {% else %}
+        <h2 class="text-center mb-5 font-bold text-3xl text-gray-800">All Products</h2>
+    {% endif %}
+
+    {% if products %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for product in products %}
+                <div class="col">
+                    {% include 'products/_product_card.html' with product=product %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center mt-5 p-4 rounded-3" role="alert">
+            <h4 class="alert-heading">No products found!</h4>
+            <p>No products available in this category or at the moment.</p>
+            {% if not category %}
+                <hr>
+                <p class="mb-0">Please check your Django admin to ensure you have products with active variants and stock greater than 0.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<style>
+    /* TEMPORARY INLINE STYLES FOR CHECKOUT PAGE (WORKAROUND) */
+    .checkout-container {
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-top: 20px;
+    }
+    .checkout-container h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-size: 2.5em;
+    }
+    .checkout-summary {
+        margin-bottom: 40px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+    .checkout-summary h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+    .checkout-summary .cart-items-list {
+        border-top: none;
+        padding-top: 0;
+    }
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 15px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+    .cart-item .item-image {
+        flex-shrink: 0;
+        width: 80px;
+        height: 80px;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .cart-item .product-thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .cart-item .item-details {
+        flex-grow: 1;
+    }
+    .cart-item .item-details h3 {
+        font-size: 1.2em;
+        margin-bottom: 5px;
+    }
+    .cart-item .item-details p {
+        font-size: 0.9em;
+        color: #555;
+    }
+    .cart-item .item-total {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #007bff;
+        flex-shrink: 0;
+        text-align: right;
+    }
+    .checkout-summary .cart-item {
+        border-bottom: 1px dashed #ddd;
+        padding: 10px 0;
+        gap: 15px;
+    }
+    .checkout-summary .cart-item:last-child {
+        border-bottom: none;
+    }
+    .checkout-summary .cart-item .item-details h3 {
+        font-size: 1em;
+    }
+    .checkout-summary .cart-item .item-total {
+        font-size: 1em;
+    }
+    .checkout-summary .cart-summary {
+        border-top: 1px solid #ccc;
+        margin-top: 20px;
+        padding-top: 20px;
+        text-align: right;
+        font-size: 1.1em;
+    }
+    .checkout-summary .cart-summary h3 {
+        font-size: 1.5em;
+        color: #007bff;
+        margin-top: 15px;
+    }
+    .checkout-form fieldset {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        background-color: #fcfcfc;
+    }
+    .checkout-form legend {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #333;
+        padding: 0 10px;
+        margin-left: -10px;
+    }
+    .checkout-form .form-row {
+        margin-bottom: 15px;
+    }
+    .checkout-form label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+    }
+    .checkout-form input[type="text"],
+    .checkout-form input[type="email"],
+    .checkout-form input[type="tel"],
+    .checkout-form input[type="number"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+    .checkout-form .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .checkout-form .checkbox-row input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+    }
+    .checkout-form .checkbox-row label {
+        margin-bottom: 0;
+        font-weight: normal;
+    }
+    .checkout-form .error-message {
+        color: #dc3545;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+    .payment-section {
+        text-align: center;
+        padding: 30px;
+        background-color: #e9f7ff;
+        border: 1px solid #a0d9f9;
+        border-radius: 8px;
+    }
+    .payment-section legend {
+        color: #007bff;
+    }
+    .payment-section .payment-placeholder-message {
+        font-size: 1.1em;
+        color: #0056b3;
+        font-style: italic;
+    }
+    .submit-order-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        font-size: 1.3em;
+        margin-top: 30px;
+    }
+    @media (max-width: 768px) {
+        .checkout-container {
+            padding: 15px;
+        }
+        .checkout-form fieldset {
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .checkout-form legend {
+            font-size: 1.3em;
+        }
+        .address-summary {
+            flex-direction: column;
+            gap: 20px;
+        }
+        .address-summary .shipping-address-summary,
+        .address-summary .billing-address-summary {
+            flex-basis: auto;
+            width: 100%;
+        }
+    }
+</style>
+<div class="checkout-container">
+    <h1>{{ page_title }}</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if not cart.items.exists %}
+        <p>Your cart is empty. Please add items before checking out.</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-primary">Continue Shopping</a>
+    {% else %}
+        <div class="checkout-summary">
+            <h2>Order Summary</h2>
+            <div class="cart-items-list">
+                {% for item in cart.items.all %}
+                    <div class="cart-item">
+                        <div class="item-image">
+                            {% if item.product_variant.product.image %}
+                                <img src="{{ item.product_variant.product.image.url }}" alt="{{ item.product_variant.product.name }}" class="product-thumbnail">
+                            {% else %}
+                                <img src="{% static 'images/placeholder.png' %}" alt="No image" class="product-thumbnail">
+                            {% endif %}
+                        </div>
+                        <div class="item-details">
+                            <h3>{{ item.product_variant.product.name }}</h3>
+                            <p>Price: ${{ item.price|floatformat:2 }}</p>
+                            <p>Quantity: {{ item.quantity }}</p>
+                        </div>
+                        <div class="item-total">
+                            ${{ item.get_total|floatformat:2 }}  <!-- Use get_total from CartItem -->
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="cart-summary">
+                <p>Subtotal: ${{ cart.get_total_price|floatformat:2 }}</p>
+                {# Shipping and tax will be calculated here later #}
+                <p>Shipping: TBD</p>
+                <p>Tax: TBD</p>
+                <h3>Order Total: ${{ cart.get_total_price|floatformat:2 }}</h3>
+            </div>
+        </div>
+
+        <form method="post" class="checkout-form" id="checkout-form">
+            {% csrf_token %}
+
+            <fieldset class="customer-details-section">
+                <legend>Customer Details</legend>
+                <div class="form-row">
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<div class="error-message">{{ form.first_name.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<div class="error-message">{{ form.last_name.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {% if form.email.errors %}<div class="error-message">{{ form.email.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.phone.label_tag }}
+                    {{ form.phone }}
+                    {% if form.phone.errors %}<div class="error-message">{{ form.phone.errors }}</div>{% endif %}
+                </div>
+            </fieldset>
+
+            <fieldset class="shipping-address-section">
+                <legend>Shipping Address</legend>
+                <div class="form-row">
+                    {{ form.shipping_address_line1.label_tag }}
+                    {{ form.shipping_address_line1 }}
+                    {% if form.shipping_address_line1.errors %}<div class="error-message">{{ form.shipping_address_line1.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.shipping_address_line2.label_tag }}
+                    {{ form.shipping_address_line2 }}
+                    {% if form.shipping_address_line2.errors %}<div class="error-message">{{ form.shipping_address_line2.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.shipping_city.label_tag }}
+                    {{ form.shipping_city }}
+                    {% if form.shipping_city.errors %}<div class="error-message">{{ form.shipping_city.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.shipping_state.label_tag }}
+                    {{ form.shipping_state }}
+                    {% if form.shipping_state.errors %}<div class="error-message">{{ form.shipping_state.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.shipping_zip_code.label_tag }}
+                    {{ form.shipping_zip_code }}
+                    {% if form.shipping_zip_code.errors %}<div class="error-message">{{ form.shipping_zip_code.errors }}</div>{% endif %}
+                </div>
+                <div class="form-row">
+                    {{ form.shipping_country.label_tag }}
+                    {{ form.shipping_country }}
+                    {% if form.shipping_country.errors %}<div class="error-message">{{ form.shipping_country.errors }}</div>{% endif %}
+                </div>
+            </fieldset>
+
+            <fieldset class="billing-address-section">
+                <legend>Billing Address</legend>
+                <div class="form-row checkbox-row">
+                    {{ form.same_as_shipping }}
+                    {{ form.same_as_shipping.label_tag }}
+                </div>
+                <div id="billing_address_fields" style="display: none;">
+                    <div class="form-row">
+                        {{ form.billing_address_line1.label_tag }}
+                        {{ form.billing_address_line1 }}
+                        {% if form.billing_address_line1.errors %}<div class="error-message">{{ form.billing_address_line1.errors }}</div>{% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ form.billing_address_line2.label_tag }}
+                        {{ form.billing_address_line2 }}
+                        {% if form.billing_address_line2.errors %}<div class="error-message">{{ form.billing_address_line2.errors }}</div>{% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ form.billing_city.label_tag }}
+                        {{ form.billing_city }}
+                        {% if form.billing_city.errors %}<div class="error-message">{{ form.billing_city.errors }}</div>{% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ form.billing_state.label_tag }}
+                        {{ form.billing_state }}
+                        {% if form.billing_state.errors %}<div class="error-message">{{ form.billing_state.errors }}</div>{% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ form.billing_zip_code.label_tag }}
+                        {{ form.billing_zip_code }}
+                        {% if form.billing_zip_code.errors %}<div class="error-message">{{ form.billing_zip_code.errors }}</div>{% endif %}
+                    </div>
+                    <div class="form-row">
+                        {{ form.billing_country.label_tag }}
+                        {{ form.billing_country }}
+                        {% if form.billing_country.errors %}<div class="error-message">{{ form.billing_country.errors }}</div>{% endif %}
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="payment-section">
+                <legend>Payment Information</legend>
+                <div id="payment-message" class="payment-placeholder-message"></div>
+                <button type="submit" id="submit-payment" class="btn btn-primary w-100">Pay with Paystack</button>
+            </fieldset>
+        </form>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sameAsShippingCheckbox = document.getElementById('same_as_shipping_checkbox');
+        const billingAddressFields = document.getElementById('billing_address_fields');
+
+        function toggleBillingAddressFields() {
+            if (sameAsShippingCheckbox.checked) {
+                billingAddressFields.style.display = 'none';
+                billingAddressFields.querySelectorAll('input').forEach(input => {
+                    if (input.type !== 'checkbox') {
+                        input.value = '';
+                        input.required = false;
+                    }
+                });
+            } else {
+                billingAddressFields.style.display = 'block';
+                billingAddressFields.querySelectorAll('input').forEach(input => {
+                    if (input.type !== 'checkbox' && input.name !== 'billing_address_line2') {
+                        input.required = true;
+                    }
+                });
+            }
+        }
+
+        toggleBillingAddressFields();
+        sameAsShippingCheckbox.addEventListener('change', toggleBillingAddressFields);
+
+        // Paystack Payment Integration
+        const form = document.getElementById('checkout-form');
+        const submitPaymentButton = document.getElementById('submit-payment');
+        const paymentMessage = document.getElementById('payment-message');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            submitPaymentButton.disabled = true;
+            paymentMessage.textContent = 'Processing order...';
+            paymentMessage.style.color = '#0056b3';
+
+            // First, submit the form to create the order
+            const formData = new FormData(form);
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                });
+
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error('Failed to create order');
+                }
+
+                // Now initiate Paystack payment
+                paymentMessage.textContent = 'Initiating payment...';
+                const paymentResponse = await fetch('{% url "checkout:create_paystack_payment" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                });
+
+                const paymentResult = await paymentResponse.json();
+                if (paymentResult.authorization_url) {
+                    window.location.href = paymentResult.authorization_url;
+                } else {
+                    throw new Error(paymentResult.error || 'Payment initialization failed');
+                }
+            } catch (error) {
+                paymentMessage.textContent = error.message || 'An error occurred. Please try again.';
+                paymentMessage.style.color = '#dc3545';
+                submitPaymentButton.disabled = false;
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

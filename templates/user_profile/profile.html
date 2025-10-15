@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Profile - {{ site_name }}{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    .profile-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        background: #fff;
+        transition: transform 0.2s;
+    }
+    .profile-card:hover {
+        transform: translateY(-4px);
+    }
+    .section-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+    }
+    .section-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+        transition: background 0.3s;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+    .btn-success {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+    }
+    .btn-success:hover {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    }
+    .btn-info {
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+    }
+    .btn-info:hover {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    .btn-warning {
+        background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+    }
+    .btn-warning:hover {
+        background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+    }
+    .btn-outline-secondary {
+        border-color: #e2e8f0;
+        color: #4b5563;
+        border-radius: 8px;
+        padding: 0.5rem 1.5rem;
+    }
+    .btn-outline-secondary:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    .text-primary { color: #059669 !important; }
+    .text-success { color: #16a34a !important; }
+    .text-info { color: #3b82f6 !important; }
+    .text-warning { color: #eab308 !important; }
+    .text-muted { color: #6b7280 !important; }
+    .lead { font-size: 1.125rem; }
+    hr {
+        border-color: #e2e8f0;
+        margin: 2rem 0;
+    }
+    @media (max-width: 768px) {
+        .profile-card { padding: 1.5rem; }
+        .section-card { margin-bottom: 1rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card p-4 shadow-sm profile-card">
+                <h2 class="text-center mb-4 font-bold text-3xl text-gray-800">Hello, {{ user.username }}!</h2>
+                <p class="lead text-center text-muted">Manage your account details and view your activity here.</p>
+
+                <hr class="my-4">
+
+                <div class="row">
+                    {# Basic Account Information Section #}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 bg-light section-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Account Details</h5>
+                                <p><strong>Username:</strong> {{ user.username }}</p>
+                                <p><strong>Email:</strong> {% if user.email %}{{ user.email }}{% else %}Not set{% endif %}</p>
+                                <p><strong>Member since:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+                                <p><strong>Last Login:</strong> {% if user.last_login %}{{ user.last_login|date:"F j, Y, H:i" }}{% else %}Never{% endif %}</p>
+                                <a href="{% url 'profile_edit' %}" class="btn btn-sm btn-outline-primary mt-2">Edit Info</a>
+                                <a href="{% url 'password_change' %}" class="btn btn-sm btn-outline-secondary mt-2">Change Password</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Order History Section #}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 section-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-success">Your Orders</h5>
+                                <p>View the history of all your purchases.</p>
+                                <a href="{% url 'order_history' %}" class="btn btn-success mt-2">View Order History</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Saved Addresses Section (Future Feature) #}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 section-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-info">Saved Addresses</h5>
+                                <p>Manage your shipping and billing addresses for faster checkout.</p>
+                                <a href="{% url 'address_list' %}" class="btn btn-info mt-2">Manage Addresses</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Other Potential Sections (Future Features) #}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 section-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-warning">Wishlist / Favorites</h5>
+                                <p>Keep track of products you love.</p>
+                                <a href="{% url 'wishlist:wishlist_view' %}" class="btn btn-warning mt-2">View Wishlist</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
