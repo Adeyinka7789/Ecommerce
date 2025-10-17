@@ -39,6 +39,8 @@ Ecommerce Site is a full-featured eCommerce platform for buying and selling fash
 - **Contact Form:** Submit inquiries via the `core` app.
 - **Payment Integration:** Process transactions with Paystack.
 
+<img width="959" height="910" alt="mermaid-diagram-2025-10-17-162801" src="https://github.com/user-attachments/assets/b36db7a2-141f-48af-8b86-81a6cf2e429c" />
+
 ## 📋 Prerequisites
 
 Before setting up the project, ensure you have the following installed:
